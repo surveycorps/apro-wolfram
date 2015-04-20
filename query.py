@@ -5,17 +5,22 @@ import sys
 import subprocess
 import speech_recognition as sr
 
-class Query(self):
+class Query():
     def __init__(self):
 	self.r = sr.Recognizer()
 
 	app_id='8K2J4H-RL4YVWRTG7'
 	self.client = wolframalpha.Client(app_id)
 
+    def say(self, words):
+	google_url = "http://translate.google.com/translate_tts?tl=en&q=%s"
+	subprocess.call(["mplayer", google_url % words])
+
     def hear(self):
+	self.say("What is your question?")
         with sr.Microphone() as source:
 	    # extract audio data from the fil
-	    audio = self.r.record(source, 7) 
+	    audio = self.r.record(source, 3) 
 	try:
 	    query = self.r.recognize(audio)
 	    return query
@@ -35,7 +40,8 @@ class Query(self):
 		texts = "I have no answer for that"
 	    # to skip ascii character in case of error
 	    texts = texts.encode('ascii', 'ignore')
-	    subprocess.call(["mplayer", "http://translate.google.co.uk/translate_tts?tl=en&q=%s" % (texts)])
+	    texts = texts[:99]
+	    subprocess.call(["mplayer", "http://translate.google.com/translate_tts?tl=en&q=%s" % (texts)])
 	    return texts
 	else:
 	    print "Sorry, I am not sure."
